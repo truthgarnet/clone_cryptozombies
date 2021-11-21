@@ -15,17 +15,23 @@ contract ZombieFactory {
 
     Zombie[] public zombies;
 
-    function _createZombie(string _name, uint256 _dna) private {
+    mapping (uint => address) public zombieToOwner;
+    mapping (address => uint) ownerZombieCount;
+
+    function _createZombie(string storage _name, uint256 _dna) internal {
         uint id = zombies.push(Zombie(_name, _dna)) - 1;
         NewZombie(id, _name, _dna);
+        zombieToOwner[id] = msg.sender;
+        ownerZombieCount[msg.sender]++;
     }
 
-    function _generateRandomDna(string _str) private view returns (uint) {
+    function _generateRandomDna(string memory _str) internal view returns (uint) {
         uint256 rand = uint256(keccak256(_str));
         return rand % dnaModulus;
     }
 
-    function createRandomZombie(string _name) public {
+    function createRandomZombie(string memory _name) public {
+        require(ownerZombieCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
         _createZombie(_name, randDna);
     }
