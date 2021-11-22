@@ -1,8 +1,6 @@
-// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.10;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
-import "..\node_modules\zeppelin-solidity\contracts\ownership\Ownable.sol";
+import "./Ownable.sol";
 
 contract ZombieFactory is Ownable{
 
@@ -17,6 +15,8 @@ contract ZombieFactory is Ownable{
         uint256 dna;
         uint32 level;
         uint32 readyTime;
+        uint16 winCount;
+        uint16 lossCount;
     }
 
     Zombie[] public zombies;
@@ -24,15 +24,15 @@ contract ZombieFactory is Ownable{
     mapping (uint => address) public zombieToOwner;
     mapping (address => uint) ownerZombieCount;
 
-    function _createZombie(string memory _name, uint256 _dna, uint32 level, uint32 cooldownTime) internal {
-        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime))) - 1;
+    function _createZombie(string memory _name, uint256 _dna, uint32 level, uint32 cooldownTime, uint16 winCount, uint16 lossCount) internal {
+        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0)) - 1;
         NewZombie(id, _name, _dna);
         zombieToOwner[id] = msg.sender;
         ownerZombieCount[msg.sender]++;
     }
 
     function _generateRandomDna(string memory _str) internal view returns (uint) {
-        uint256 rand = uint256(keccak256(_str));
+        uint256 rand = uint256(keccak256((abi.encodePacked(_str))));
         return rand % dnaModulus;
     }
 
