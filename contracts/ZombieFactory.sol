@@ -1,14 +1,17 @@
 pragma solidity ^0.8.10;
 
 import "./Ownable.sol";
+import "./SafeMath.sol";
 
 contract ZombieFactory is Ownable{
 
-    uint dnaDigits = 16;
-    uint dnaModulus = 10 ** dnaDigits;
-    uint cooldownTime = 1 days;
+    using SafeMath for uint256;
 
     event NewZombie(uint zombieId, string name, uint dna);
+
+    uint dnaDigits = 16;
+    uint dnaModulus = 10 ** dnaDigits;
+    uint coolDownTime = 1 days;
 
     struct Zombie{
         string name;
@@ -28,7 +31,7 @@ contract ZombieFactory is Ownable{
         uint id = zombies.push(Zombie(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0)) - 1;
         NewZombie(id, _name, _dna);
         zombieToOwner[id] = msg.sender;
-        ownerZombieCount[msg.sender]++;
+        ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].add(1);
     }
 
     function _generateRandomDna(string memory _str) internal view returns (uint) {

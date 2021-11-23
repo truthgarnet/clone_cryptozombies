@@ -20,11 +20,11 @@ contract ZombieHelper is ZombieFeeding {
         owner.transfer(address(this).balance);
     }
 
-    function changName(uint _zombieId, string memory _newName) external aboveLevel(2, _zombieId) ownerOf(_zombieId) {
+    function changName(uint _zombieId, string memory _newName) external aboveLevel(2, _zombieId) onlyOwnerOf(_zombieId) {
         zombies[_zombieId].name = _newName;
     }
 
-    function changeDna(uint _zombieId, string memory _newDna) external aboveLevel(20, _zombieId) ownerOf(_zombieId){
+    function changeDna(uint _zombieId, string memory _newDna) external aboveLevel(20, _zombieId) onlyOwnerOf(_zombieId){
         zombies[_zombieId].dna = _newDna;
     }
 
