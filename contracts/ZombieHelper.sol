@@ -2,6 +2,7 @@ pragma solidity ^0.8.10;
 
 import "./ZombieFeeding.sol";
 
+
 contract ZombieHelper is ZombieFeeding {
 
     uint levelUpFee = 0.001 ether;
@@ -16,15 +17,15 @@ contract ZombieHelper is ZombieFeeding {
     }
 
 
-    function withdraw() external onlyOwner {
-        owner.transfer(address(this).balance);
+    function withdraw() external payable onlyOwner {
+        payable(msg.sender);
     }
 
     function changName(uint _zombieId, string memory _newName) external aboveLevel(2, _zombieId) onlyOwnerOf(_zombieId) {
         zombies[_zombieId].name = _newName;
     }
 
-    function changeDna(uint _zombieId, string memory _newDna) external aboveLevel(20, _zombieId) onlyOwnerOf(_zombieId){
+    function changeDna(uint _zombieId, uint _newDna) external aboveLevel(20, _zombieId) onlyOwnerOf(_zombieId){
         zombies[_zombieId].dna = _newDna;
     }
 
